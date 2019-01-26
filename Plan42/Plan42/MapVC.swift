@@ -11,7 +11,8 @@ import GoogleMaps
 import GooglePlaces
 
 
-let directionsApi = "AIzaSyAeuNLRnIR4n8Uf2cdc1VFFb-2OK2HNSR4"
+//let directionsApi = "AIzaSyAeuNLRnIR4n8Uf2cdc1VFFb-2OK2HNSR4"  // mpopovyc
+let directionsApi = "AIzaSyCxl4gr6gw8u0DeyOqmKFaqrgP1TO4EGp4"    // afesyk
 
 class MapVC: UIViewController, UISearchDisplayDelegate {
     
@@ -75,37 +76,39 @@ class MapVC: UIViewController, UISearchDisplayDelegate {
         let start = "\(locationStart.coordinate.latitude),\( locationStart.coordinate.longitude)"
         let dest = "\(locationDestination.coordinate.latitude),\( locationDestination.coordinate.longitude)"
         let url = URL(string : "https://maps.googleapis.com/maps/api/directions/json?origin=" + start + "&destination=" + dest + "&key=" + directionsApi)
-         DispatchQueue.main.async {
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let task = URLSession.shared.dataTask(with: url!) {(data, response, error) in
-            guard let data = data else { return }
-            print(String(data: data, encoding: .utf8)!)
-            do{
-                let json = try JSONSerialization.jsonObject(with: data, options:.allowFragments) as! [String : AnyObject]
-                let routes = json["routes"] as! NSArray
-                self.mapView.clear()
-                
-                    for route in routes
-                    {
-                        let routeOverviewPolyline:NSDictionary = (route as! NSDictionary).value(forKey: "overview_polyline") as! NSDictionary
-                        let points = routeOverviewPolyline.object(forKey: "points")
-                        let path = GMSPath.init(fromEncodedPath: points! as! String)
-                        let polyline = GMSPolyline.init(path: path)
-                        polyline.strokeWidth = 3
+        
+        
+            var request = URLRequest(url: url!)
+            request.httpMethod = "POST"
+            let task = URLSession.shared.dataTask(with: url!) {(data, response, error) in
+                guard let data = data else { return }
+                print(String(data: data, encoding: .utf8)!)
+                do{
+                    let json = try JSONSerialization.jsonObject(with: data, options:.allowFragments) as! [String : AnyObject]
+                    let routes = json["routes"] as! NSArray
+                    DispatchQueue.main.async {
+                        self.mapView.clear()
                         
-                        let bounds = GMSCoordinateBounds(path: path!)
-                        self.mapView!.animate(with: GMSCameraUpdate.fit(bounds, withPadding: 30.0))
-                        
-                        polyline.map = self.mapView
-                        
+                            for route in routes
+                            {
+                                let routeOverviewPolyline:NSDictionary = (route as! NSDictionary).value(forKey: "overview_polyline") as! NSDictionary
+                                let points = routeOverviewPolyline.object(forKey: "points")
+                                let path = GMSPath.init(fromEncodedPath: points! as! String)
+                                let polyline = GMSPolyline.init(path: path)
+                                polyline.strokeWidth = 3
+                                
+                                let bounds = GMSCoordinateBounds(path: path!)
+                                self.mapView!.animate(with: GMSCameraUpdate.fit(bounds, withPadding: 30.0))
+                                
+                                polyline.map = self.mapView
+                            }
                     }
-            }catch let error as NSError{
-                print("error:\(error)")
+                }catch let error as NSError{
+                    print("error:\(error)")
+                }
             }
-        }
-            task.resume()
-        }
+                task.resume()
+
     }
     
 }

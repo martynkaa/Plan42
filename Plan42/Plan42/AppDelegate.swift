@@ -10,7 +10,8 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 
-let googleApiKey = "AIzaSyDsyWOW6iTIIHRiBdbBznSIJJJetoSFEL8"
+//let googleApiKey = "AIzaSyDsyWOW6iTIIHRiBdbBznSIJJJetoSFEL8"  // mpopovyc
+let googleApiKey = "AIzaSyCxl4gr6gw8u0DeyOqmKFaqrgP1TO4EGp4"    // afesyk
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
